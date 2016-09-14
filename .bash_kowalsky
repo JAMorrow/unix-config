@@ -1,0 +1,184 @@
+#!/bin/bash
+
+#============================================================
+#
+# Personal Configurations for BASH
+# Author: Jennifer Kowalsky
+# Credit: Mostly to the internet.
+#
+#============================================================
+
+
+
+#-------------------
+# Personal Aliases
+#-------------------
+
+alias alpine='alpine -passfile ~/.pine-passfile'
+alias rm='rm -i'
+alias cp='cp -i'
+alias mv='mv -i'
+# -> Prevents accidentally clobbering files.
+alias mkdir='mkdir -p'
+
+alias h='history'
+alias j='jobs -l'
+alias which='type -a'
+alias ..='cd ..'
+
+# Pretty-print of some PATH variables:
+alias path='echo -e ${PATH//:/\\n}'
+alias libpath='echo -e ${LD_LIBRARY_PATH//:/\\n}'
+
+alias du='du -kh'    # Makes a more readable output.
+alias df='df -kTh'
+
+# Get rid of Windows Line Endings:
+alias perlpie="perl -p -i -e 's/\r\n$/\n/g' "
+
+
+#-------------------------------------------------------------
+# The 'ls' family (this assumes you use a recent GNU ls).
+#-------------------------------------------------------------
+# Add colors for filetype and  human-readable sizes by default on 'ls':
+alias ls='ls -h --color'
+alias lx='ls -lXB'         #  Sort by extension.
+alias lk='ls -lSr'         #  Sort by size, biggest last.
+alias lt='ls -ltr'         #  Sort by date, most recent last.
+alias lc='ls -ltcr'        #  Sort by/show change time,most recent last.
+alias lu='ls -ltur'        #  Sort by/show access time,most recent last.
+
+# The ubiquitous 'll': directories first, with alphanumeric sorting:
+alias ll="ls -lv --group-directories-first"
+alias lm='ll |more'        #  Pipe through 'more'
+alias lr='ll -R'           #  Recursive ls.
+alias la='ll -A'           #  Show hidden files.
+alias tree='tree -Csuh'    #  Nice alternative to 'recursive ls' ...
+
+
+#-------------------------------------------------------------
+# Tailoring 'less'
+#-------------------------------------------------------------
+
+alias more='less'
+export PAGER=less
+export LESSCHARSET='latin1'
+export LESSOPEN='|/usr/bin/lesspipe.sh %s 2>&-'
+# Use this if lesspipe.sh exists.
+export LESS='-i -N -w  -z-4 -g -e -M -X -F -R -P%t?f%f \
+:stdin .?pb%pb\%:?lbLine %lb:?bbByte %bb:-...'
+
+# LESS man page colors (makes Man pages more readable).
+export LESS_TERMCAP_mb=$'\E[01;31m'
+export LESS_TERMCAP_md=$'\E[01;31m'
+export LESS_TERMCAP_me=$'\E[0m'
+export LESS_TERMCAP_se=$'\E[0m'
+export LESS_TERMCAP_so=$'\E[01;44;33m'
+export LESS_TERMCAP_ue=$'\E[0m'
+export LESS_TERMCAP_us=$'\E[01;32m'
+
+
+#-------------------------------------------------------------
+# Tailoring 'git'
+#-------------------------------------------------------------
+alias gitlg='git lg'
+alias gitch='git checkout'
+alias gita='git add '
+alias gitau='git add -u'
+alias gitc='git commit'
+alias gitca='git commit --amend '
+alias gitoops='git reset --hard HEAD'
+alias gitpom='git push origin master'
+alias gitpoh='git push origin HEAD'
+alias gitrm='git rm --cached'
+alias gits='git status'
+alias gitd='git diff'
+
+
+#-------------------------------------------------------------
+# Spelling typos - highly personnal and keyboard-dependent :-)
+#-------------------------------------------------------------
+alias xs='cd'
+alias vf='cd'
+alias moer='more'
+alias moew='more'
+alias kk='ll'
+alias eamcs='emacs'
+alias emasc='emacs'
+
+#-------------------------------------------------------------
+# Easily edit this file
+#-------------------------------------------------------------
+alias mybash="emacsclient ~/.bash_kowalsky"
+alias sbs='source ~/.bashrc'
+
+
+function linuxlineendings { # Remove Window's line endings.
+        FILENAME=$1
+        perlpie $FILENAME
+}
+
+
+
+function go {          # find file, then cd to the containing dir
+    # SO: find-file-then-cd-to-that-directory-in-linux
+    FILENAME=$1
+    cd "$(dirname "$(find . -type f -name "$FILENAME" | head -1)")"
+}
+
+#-------------------------------------------------------------
+function up()          # Replacement for cd ../.. ; instead up 2
+{
+        local d=""
+        limit=$1
+        for ((i=1 ; i <= limit ; i++))
+    do
+                d=$d/..
+    done
+        d=$(echo $d | sed 's/^\///')
+        if [ -z "$d" ]; then
+                d=..
+        fi
+        cd $d
+}
+
+#-------------------------------------------------------------
+function extract()     # Easy extraction of archive files
+{
+        if [ -f "$1" ] ; then
+                case "$1" in
+                        *.tar.bz2) tar xjf "$1" ;;
+                        *.tar.gz) tar xzf "$1" ;;
+                        *.tar.Z) tar xzf "$1" ;;
+                        *.bz2) bunzip2 "$1" ;;
+                        *.rar) unrar x "$1" ;;
+                        *.gz) gunzip "$1" ;;
+                        *.jar) unzip "$1" ;;
+                        *.tar) tar xf "$1" ;;
+                        *.tbz2) tar xjf "$1" ;;
+                        *.tgz) tar xzf "$1" ;;
+                        *.zip) unzip "$1" ;;
+                        *.Z) uncompress "$1" ;;
+                        *) echo "'$1' cannot be extracted." ;;
+                esac
+        else
+                echo "'$1' is not a file."
+        fi
+}
+
+#-------------------------------------------------------------
+function mailme()     # Mail myself information. "SUBJECT" "MESSAGE"
+{
+    echo "$2" | mail -s "$1" Jennifer.Kowalsky@Fluke.com
+}
+
+
+
+#-------------------------------------------------------------
+function myhelp {      # gives help on .bashrc capabilities
+    printfuncs
+}
+# Local Variables:
+# mode:shell-script
+# sh-shell:bash
+# End:

@@ -119,11 +119,6 @@
 (global-set-key (kbd "M-o") 'other-window)
 (global-set-key (kbd "M-p") 'other-frame)
 
-;; For Java development
-(require 'eclim)
-(global-eclim-mode)
-(require 'eclimd)
-
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
@@ -138,8 +133,6 @@
     ("cdd26fa6a8c6706c9009db659d2dffd7f4b0350f9cc94e5df657fa295fffec71" default)))
  '(desktop-restore-eager 5)
  '(desktop-save t)
- '(eclim-eclipse-dirs (quote ("/godzilla/usr2/jkowalsk/eclipse")))
- '(eclim-executable "/godzilla/usr2/jkowalsk/eclipse/eclim")
  '(fringe-mode 10 nil (fringe))
  '(global-auto-revert-mode nil)
  '(global-reveal-mode t)
@@ -157,8 +150,6 @@
          (aref ansi-term-color-vector 0))))))
 
 (require 'company)
-(require 'company-emacs-eclim)
-(company-emacs-eclim-setup)
 (global-company-mode t)
 
 

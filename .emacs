@@ -14,14 +14,57 @@
 (let ((default-directory "~/.emacs.d/elpa/"))
   (normal-top-level-add-subdirs-to-load-path))
 
-;; MELPA support
+;; MELPA and Marmalade support
 (require 'package)
 (add-to-list 'package-archives
-             '("melpa" . "http://melpa.org/packages/") t)
+             '("melpa" . "http://melpa.org/packages/")
+             '("marmalade" . "https://marmalade-repo.org/packages/" ))
 (when (< emacs-major-version 24)
   ;; For important compatibility libraries like cl-lib
   (add-to-list 'package-archives '("gnu" . "http://elpa.gnu.org/packages/")))
+
+
+;; change all prompts to y or n
+(fset 'yes-or-no-p 'y-or-n-p)
+
+(custom-set-variables
+ ;; custom-set-variables was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(ansi-color-faces-vector
+   [default bold shadow italic underline bold bold-italic bold])
+ '(column-number-mode t)
+ '(cursor-type (quote bar))
+ '(desktop-restore-eager 5)
+ '(desktop-save t)
+ '(fringe-mode 10 nil (fringe))
+ '(global-auto-revert-mode nil)
+ '(global-reveal-mode t)
+ '(inhibit-startup-screen t)
+ '(linum-format "%3i")
+ '(package-selected-packages
+   (quote
+    (origami cheatsheet ample-theme moe-theme which-key visual-regexp-steroids dired-rainbow rainbow-delimiters powerline fish-mode cmake-mode smex nyan-mode nsis-mode multi-term magit-gitflow git-messenger)))
+ '(vc-annotate-background nil)
+ '(vc-annotate-very-old-color nil)
+ '(when
+      (or
+       (not
+        (boundp
+         (quote ansi-term-color-vector)))
+       (not
+        (facep
+         (aref ansi-term-color-vector 0))))))
+
+;;;
+;;; Make sure all neededd packages are installed.
+;;;
 (package-initialize)
+(unless package-archive-contents
+  (package-refresh-contents))
+(package-install-selected-packages)
+
 
 
 ;;;
@@ -147,10 +190,6 @@
 ;; Kill auto-fill mode, for it is evil.
 (auto-fill-mode -1)
 
-;; change all prompts to y or n
-(fset 'yes-or-no-p 'y-or-n-p)
-
-
 ;;;
 ;;; FUN
 ;;;
@@ -160,36 +199,9 @@
 (nyan-start-animation)
 
 
-(custom-set-variables
- ;; custom-set-variables was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(ansi-color-faces-vector
-   [default bold shadow italic underline bold bold-italic bold])
- '(column-number-mode t)
- '(cursor-type (quote bar))
- '(desktop-restore-eager 5)
- '(desktop-save t)
- '(fringe-mode 10 nil (fringe))
- '(global-auto-revert-mode nil)
- '(global-reveal-mode t)
- '(inhibit-startup-screen t)
- '(linum-format "%3i")
- '(package-selected-packages
-   (quote
-    (origami cheatsheet ample-theme moe-theme which-key visual-regexp-steroids dired-rainbow rainbow-delimiters powerline fish-mode cmake-mode smex nyan-mode nsis-mode multi-term magit-gitflow git-messenger)))
- '(vc-annotate-background nil)
- '(vc-annotate-very-old-color nil)
- '(when
-      (or
-       (not
-        (boundp
-         (quote ansi-term-color-vector)))
-       (not
-        (facep
-         (aref ansi-term-color-vector 0))))))
-
+;;;
+;;; Final Startup
+;;;
 
 ;; Start emacs in server mode if it isn't that way already.
 (server-start)

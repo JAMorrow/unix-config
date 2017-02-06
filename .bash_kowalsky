@@ -8,6 +8,22 @@
 #
 #============================================================
 
+alias bigscreen="xrandr --output Virtual1 --mode 1920x1200"
+alias littlescreen="xrandr --output Virtual1 --mode 640x480"
+feh --bg-scale /home/jkowalsk/Pictures/wallpaper.jpg
+
+alias starsky="cd ~/projects/starsky"
+
+#-------------------------------------------------------------
+# Add Emacs 256 color suport.
+#-------------------------------------------------------------
+export TERM="xterm-256color"
+
+#-------------------------------------------------------------
+# Add dev tools to path
+#-------------------------------------------------------------
+export PATH=$PATH:~/devtools/clion-2016.3.2/bin
+alias clion="~/devtools/clion-2016.3.2/bin/clion.sh"
 
 
 #-------------------
@@ -165,14 +181,6 @@ function extract()     # Easy extraction of archive files
                 echo "'$1' is not a file."
         fi
 }
-
-#-------------------------------------------------------------
-function mailme()     # Mail myself information. "SUBJECT" "MESSAGE"
-{
-    echo "$2" | mail -s "$1" Jennifer.Kowalsky@Fluke.com
-}
-
-
 
 #-------------------------------------------------------------
 function myhelp {      # gives help on .bashrc capabilities

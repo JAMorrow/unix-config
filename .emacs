@@ -36,6 +36,10 @@
    [default bold shadow italic underline bold bold-italic bold])
  '(column-number-mode t)
  '(cursor-type (quote bar))
+ '(custom-enabled-themes (quote (ample)))
+ '(custom-safe-themes
+   (quote
+    ("938d8c186c4cb9ec4a8d8bc159285e0d0f07bad46edf20aa469a89d0d2a586ea" default)))
  '(desktop-restore-eager 5)
  '(desktop-save t)
  '(fringe-mode 10 nil (fringe))
@@ -45,7 +49,7 @@
  '(linum-format "%3i")
  '(package-selected-packages
    (quote
-    (origami cheatsheet ample-theme moe-theme which-key visual-regexp-steroids dired-rainbow rainbow-delimiters powerline fish-mode cmake-mode smex nyan-mode nsis-mode multi-term magit-gitflow git-messenger)))
+    (redtick paredit-everywhere paredit virtualenvwrapper origami cheatsheet ample-theme moe-theme which-key visual-regexp-steroids dired-rainbow rainbow-delimiters powerline fish-mode cmake-mode smex nyan-mode nsis-mode multi-term magit-gitflow git-messenger)))
  '(vc-annotate-background nil)
  '(vc-annotate-very-old-color nil)
  '(when
@@ -141,12 +145,23 @@
 (require 'rainbow-delimiters)
 (add-hook 'prog-mode-hook #'rainbow-delimiters-mode)
 
+;; Paredit everywhere
+(require 'paredit)
+(require 'paredit-everywhere)
+(add-hook 'prog-mode-hook 'paredit-everywhere-mode)
+
 ;; Git tools
 (require 'magit)
 (global-set-key (kbd "C-x g") 'magit-status)
 ;; See what commit inspired the change
+
+(require 'magit-gitflow)
+(add-hook 'magit-mode-hook 'turn-on-magit-gitflow)
+
 (require 'git-messenger)
 (global-set-key (kbd "C-x v p") 'git-messenger:popup-message)
+
+
 
 ;;;
 ;;; PYTHON

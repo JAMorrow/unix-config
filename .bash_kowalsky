@@ -9,10 +9,10 @@
 #============================================================
 
 alias bigscreen="xrandr --output Virtual1 --mode 1920x1200"
-alias littlescreen="xrandr --output Virtual1 --mode 640x480"
+alias littlescreen="xrandr --output Virtual1 --mode 1680x1050"
 feh --bg-scale /home/jkowalsk/Pictures/wallpaper.jpg
 
-alias starsky="cd ~/projects/starsky"
+alias starsky="cd /usr0/igdedv/sw/working/jkowalsk/starsky"
 
 #-------------------------------------------------------------
 # Add Emacs 256 color suport.
@@ -22,8 +22,8 @@ export TERM="xterm-256color"
 #-------------------------------------------------------------
 # Add dev tools to path
 #-------------------------------------------------------------
-export PATH=$PATH:~/devtools/clion-2016.3.2/bin
-alias clion="~/devtools/clion-2016.3.2/bin/clion.sh"
+# path to qmake
+export PATH=/opt/Qt5.8.0/5.8/gcc_64/bin:$PATH
 
 
 #-------------------

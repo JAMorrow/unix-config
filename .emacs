@@ -1,6 +1,5 @@
 ;;; package --- Jennifer Kowalsky's .emacs file
 ;;; Commentary:
-;;; This is the Linux version.  It points to the Global configs in .emacs_kowalsky
 ;;; Code:
 
 ;; Added by Package.el.  This must come before configurations of
@@ -163,12 +162,6 @@
 ;;; MISC
 ;;;
 
-(require 'cheatsheet)
-(load-file "~/.emacs_cheatsheet")
-
-;;(require 'template)
-(global-set-key (kbd "C-c C-t") 'template-new-file)
-
 ;; hide scroll and tool bars
 (if (fboundp 'scroll-bar-mode) (scroll-bar-mode -1))
 (if (fboundp 'tool-bar-mode) (tool-bar-mode -1))
@@ -208,9 +201,3 @@
 
 (provide '.emacs)
 ;;; .emacs ends here
-(custom-set-faces
- ;; custom-set-faces was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- )

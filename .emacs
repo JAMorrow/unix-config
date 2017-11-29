@@ -36,20 +36,21 @@
    [default bold shadow italic underline bold bold-italic bold])
  '(column-number-mode t)
  '(cursor-type (quote bar))
- '(custom-enabled-themes (quote (ample)))
+ '(custom-enabled-themes (quote (doom-one)))
  '(custom-safe-themes
    (quote
-    ("938d8c186c4cb9ec4a8d8bc159285e0d0f07bad46edf20aa469a89d0d2a586ea" default)))
+    ("bb749a38c5cb7d13b60fa7fc40db7eced3d00aa93654d150b9627cabd2d9b361" "666c783d1534051189c9bca391037fc5a11dbc5d51dbe80e8148d66bfa4e9fdb" "1219caa012a72ee96a86bba91fd6ec4eca2586dbcd1fe82facb5d0655a28b055" "938d8c186c4cb9ec4a8d8bc159285e0d0f07bad46edf20aa469a89d0d2a586ea" default)))
  '(desktop-restore-eager 5)
  '(desktop-save t)
  '(fringe-mode 10 nil (fringe))
  '(global-auto-revert-mode nil)
+ '(global-company-mode t)
  '(global-reveal-mode t)
  '(inhibit-startup-screen t)
  '(linum-format "%3i")
  '(package-selected-packages
    (quote
-    (redtick paredit-everywhere paredit virtualenvwrapper origami cheatsheet ample-theme moe-theme which-key visual-regexp-steroids dired-rainbow rainbow-delimiters powerline fish-mode cmake-mode smex nyan-mode nsis-mode multi-term magit-gitflow git-messenger)))
+    (company-irony-c-headers clang-format company-irony flycheck-color-mode-line flycheck-rtags flycheck doom-themes related projectile rtags company-c-headers company column-marker cpputils-cmake cmake-mode redtick paredit-everywhere paredit virtualenvwrapper origami cheatsheet ample-theme moe-theme which-key visual-regexp-steroids dired-rainbow rainbow-delimiters powerline rtags smex nyan-mode nsis-mode multi-term)))
  '(vc-annotate-background nil)
  '(vc-annotate-very-old-color nil)
  '(when
@@ -61,21 +62,35 @@
         (facep
          (aref ansi-term-color-vector 0))))))
 
+(set-frame-font "Source Code Pro-9" nil t)
+(tool-bar-mode 0)
+
 ;;;
-;;; Make sure all neededd packages are installed.
+;;; Make sure all needed packages are installed.
 ;;;
 (package-initialize)
-(unless package-archive-contents
-  (package-refresh-contents))
-(package-install-selected-packages)
 
-
+(setq browse-url-browser-function 'browse-url-generic
+      browse-url-generic-program "google-chrome")
 
 ;;;
-;;; THEME
+;;; ORGMODE
 ;;;
-(load-theme 'ample-flat t t)
-(enable-theme 'ample-flat)
+(add-hook 'org-mode-hook 
+          (lambda ()
+            (local-set-key "\M-n" 'outline-next-visible-heading)
+            (local-set-key "\M-p" 'outline-previous-visible-heading)
+            ;; table
+            (local-set-key "\C-\M-w" 'org-table-copy-region)
+            (local-set-key "\C-\M-y" 'org-table-paste-rectangle)
+            (local-set-key "\C-\M-l" 'org-table-sort-lines)
+            ;; display images
+            (local-set-key "\M-I" 'org-toggle-iimage-in-org)
+            ;; fix tab
+            (local-set-key "\C-y" 'yank)))
+
+(require 'org-bullets)
+(add-hook 'org-mode-hook (lambda () (org-bullets-mode 1)))
 
 ;;;
 ;;; TERMINAL
@@ -141,6 +156,43 @@
 ;;; PROGRAMMING
 ;;;
 
+;; set tabs to indent as white spaces and set default tab width to 4 white spaces
+(setq-default indent-tabs-mode nil)
+(setq-default tab-width 4)
+
+;; cpputils-cmake 
+(add-hook 'c-mode-common-hook
+          (lambda ()
+            (if (derived-mode-p 'c-mode 'c++-mode)
+                (cppcm-reload-all)
+              )))
+;; OPTIONAL, avoid typing full path when starting gdb
+(global-set-key (kbd "C-c C-g")
+                '(lambda ()(interactive) (gud-gdb (concat "gdb --fullname " (cppcm-get-exe-path-current-buffer)))))
+
+
+;;Highlight column 80 in foo mode.
+(require 'column-marker)
+(add-hook 'prog-mode-hook (lambda () (interactive) (column-marker-1 80)))
+
+(setq cppcm-get-executable-full-path-callback
+      (lambda (path type tgt-name)
+        ;; path is the supposed-to-be target's full path
+        ;; type is either add_executabe or add_library
+        ;; tgt-name is the target to built. The target's file extension is stripped
+        (message "cppcm-get-executable-full-path-callback called => %s %s %s" path type tgt-name)
+        (let* ((dir (file-name-directory path))
+               (file (file-name-nondirectory path)))
+          (cond
+           ((string= type "add_executable")
+            (setq path (concat dir "bin/" file)))
+           ;; for add_library
+           (t (setq path (concat dir "lib/" file)))
+           ))
+        ;; return the new path
+        (message "cppcm-get-executable-full-path-callback called => path=%s" path)
+        path))
+
 ;; Rainbow delimiters in most programming modes
 (require 'rainbow-delimiters)
 (add-hook 'prog-mode-hook #'rainbow-delimiters-mode)
@@ -150,18 +202,133 @@
 (require 'paredit-everywhere)
 (add-hook 'prog-mode-hook 'paredit-everywhere-mode)
 
-;; Git tools
-(require 'magit)
-(global-set-key (kbd "C-x g") 'magit-status)
-;; See what commit inspired the change
+;;;
+;;; C++
+;;;
 
-(require 'magit-gitflow)
-(add-hook 'magit-mode-hook 'turn-on-magit-gitflow)
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; cmake ide & rtags
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(require 'rtags)
 
-(require 'git-messenger)
-(global-set-key (kbd "C-x v p") 'git-messenger:popup-message)
+;; set path to project build directory
+(setq cmake-ide-build-dir
+      (expand-file-name "/usr0/igdev/sw/working/jkowalsk/starsky/build/linux-desktop-debug"))
+;; CURRENTLY: hardcode to build dir of default project
+;; TODO: fix via .dir-locals.el
+
+;; set path to rtag executables
+(setq rtags-path
+      (expand-file-name "/godzilla/usr1/jkowalsk/rtags/rtags/build"))
+
+;; invoke cmake-ide setup
+(require 'cmake-ide)
+(cmake-ide-setup)
+
+;; start the rdm process unless the process is already running.
+;; (I prefer to launch rdm externally and prior to Emacs)
+;;(rtags-start-process-unless-running)
+
+;; Enable rtags-diagnostics.
+;;(setq rtags-autostart-diagnostics t)
+;;(rtags-diagnostics)
 
 
+;; Timeout for reparse on onsaved buffers
+(rtags-set-periodic-reparse-timeout 0.5)
+
+;; Rtags standard keybindings ([M-. on symbol to go to bindings])
+(rtags-enable-standard-keybindings)
+
+;; Custom keybindings
+(global-set-key (kbd "<home>") 'rtags-find-symbol-at-point)
+(global-set-key (kbd "<prior>") 'rtags-location-stack-back)
+(global-set-key (kbd "<next>") 'rtags-location-stack-forward)
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; flycheck-mode
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(require 'flycheck)
+(global-flycheck-mode)
+
+;; color model line
+(require 'flycheck-color-mode-line)
+(with-eval-after-load 'flycheck
+  '(add-hook 'flycheck-mode-hook 'flycheck-color-mode-line-mode))
+
+;; rtags with Flycheck (syntax checking)
+(require 'flycheck-rtags)
+(defun my-flycheck-rtags-setup ()
+  (flycheck-select-checker 'rtags)
+  (setq-local flycheck-highlighting-mode nil) ;; RTags creates more accurate overlays.
+  (setq-local flycheck-check-syntax-automatically nil))
+(add-hook 'c-mode-hook #'my-flycheck-rtags-setup)
+(add-hook 'c++-mode-hook #'my-flycheck-rtags-setup)
+(add-hook 'objc-mode-hook #'my-flycheck-rtags-setup)
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; irony (C/C++ minor mode powered by libclang) and company for completions
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(add-hook 'c++-mode-hook 'irony-mode)
+(add-hook 'c-mode-hook 'irony-mode)
+;(add-hook 'objc-mode-hook 'irony-mode)
+(add-hook 'irony-mode-hook 'irony-cdb-autosetup-compile-options)
+
+;; replace the `completion-at-point' and `complete-symbol' bindings in
+;; irony-mode's buffers by irony-mode's function
+(defun my-irony-mode-hook ()
+  (define-key irony-mode-map [remap completion-at-point]
+    'irony-completion-at-point-async)
+  (define-key irony-mode-map [remap complete-symbol]
+    'irony-completion-at-point-async))
+(add-hook 'irony-mode-hook 'my-irony-mode-hook)
+(add-hook 'irony-mode-hook 'irony-cdb-autosetup-compile-options)
+
+;; Enable company mode
+(require 'company)
+(global-company-mode)
+
+;; company-irony
+(require 'company-irony-c-headers)
+;; Load with `irony-mode` as a grouped backend
+(eval-after-load 'company
+  '(add-to-list
+    'company-backends '(company-irony-c-headers company-irony)))
+
+;; (eval-after-load 'company
+;;   '(add-to-list 'company-backends 'company-irony))
+
+;; (optional) adds CC special commands to `company-begin-commands' in order to
+;; trigger completion at interesting places, such as after scope operator
+;;     std::|
+(add-hook 'irony-mode-hook 'company-irony-setup-begin-commands)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; clang-format
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; clang-format can be triggered using C-M-tab
+(require 'clang-format)
+(global-set-key [C-M-tab] 'clang-format-region)
+;; If the repo does not have a .clang-format files, one can
+;; be created using google style:
+;; clang-format -style=google -dump-config > .clang-format
+;; In this, default indent is 2 (see 'IndentWidth' key in generated file).
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; C/C++ mode
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;; Protobuf
+(add-to-list 'auto-mode-alist '("\\.proto\\'" . protobuf-mode))
+
+;; **************************************************************************
+;; IGDEV Emacs Coding Style mode files
+;; ***************************************************************************
+(load-file "~/unix-config/cmode.el") 
+
+;;(add-hook 'c-mode-common-hook 'google-set-c-style)
 
 ;;;
 ;;; PYTHON
@@ -178,8 +345,6 @@
 ;;; MISC
 ;;;
 
-(require 'cheatsheet)
-(load-file "~/.emacs_cheatsheet")
 
 ;;(require 'template)
 (global-set-key (kbd "C-c C-t") 'template-new-file)
@@ -212,7 +377,6 @@
 ;; Nyan mode
 (nyan-mode 1)
 (nyan-start-animation)
-
 
 ;;;
 ;;; Final Startup

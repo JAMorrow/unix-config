@@ -8,11 +8,29 @@
 #
 #============================================================
 
-alias bigscreen="xrandr --output Virtual1 --mode 1920x1200"
-alias littlescreen="xrandr --output Virtual1 --mode 1680x1050"
-feh --bg-scale /home/jkowalsk/Pictures/wallpaper.jpg
+alias clion="/godzilla/usr1/jkowalsk/clion-2017.1/bin/clion.sh &"
 
-alias starsky="cd /usr0/igdedv/sw/working/jkowalsk/starsky"
+alias starsky="cd /usr0/igdev/sw/working/jkowalsk/starsky"
+# App dirs
+alias core="cd /usr0/igdev/sw/working/jkowalsk/starsky/src/linux/core"
+alias ctrl="cd /usr0/igdev/sw/working/jkowalsk/starsky/src/linux/ctrl"
+alias msm="cd /usr0/igdev/sw/working/jkowalsk/starsky/src/linux/msm"
+alias proto="cd /usr0/igdev/sw/working/jkowalsk/starsky/src/linux/proto"
+alias remote="cd /usr0/igdev/sw/working/jkowalsk/starsky/src/linux/remote"
+alias shared="cd /usr0/igdev/sw/working/jkowalsk/starsky/src/linux/shared"
+alias ui="cd /usr0/igdev/sw/working/jkowalsk/starsky/src/linux/ui"
+
+# build dirs
+alias coreb="cd /usr0/igdev/sw/working/jkowalsk/starsky/build/linux-desktop-debug/core"
+alias ctrlb="cd /usr0/igdev/sw/working/jkowalsk/starsky/build/linux-desktop-debug/ctrl"
+alias msmb="cd /usr0/igdev/sw/working/jkowalsk/starsky/build/linux-desktop-debug/msm"
+alias protob="cd /usr0/igdev/sw/working/jkowalsk/starsky/build/linux-desktop-debug/proto"
+alias remoteb="cd /usr0/igdev/sw/working/jkowalsk/starsky/build/linux-desktop-debug/remote"
+alias uib="cd /usr0/igdev/sw/working/jkowalsk/starsky/build/linux-desktop-debug/ui"
+
+alias sapps="/usr0/igdev/sw/working/jkowalsk/starsky/tools/populate.sh --fast -m -j4 apps"
+alias sclean="/usr0/igdev/sw/working/jkowalsk/starsky/tools/populate.sh --clean apps"
+alias slibs="/usr0/igdev/sw/working/jkowalsk/starsky/tools/populate.sh -j4 --build libs"
 
 #-------------------------------------------------------------
 # Add Emacs 256 color suport.
@@ -24,6 +42,7 @@ export TERM="xterm-256color"
 #-------------------------------------------------------------
 # path to qmake
 export PATH=/opt/Qt5.8.0/5.8/gcc_64/bin:$PATH
+
 
 
 #-------------------
@@ -132,14 +151,6 @@ alias sbs='source ~/.bashrc'
 function linuxlineendings { # Remove Window's line endings.
         FILENAME=$1
         perlpie $FILENAME
-}
-
-
-
-function go {          # find file, then cd to the containing dir
-    # SO: find-file-then-cd-to-that-directory-in-linux
-    FILENAME=$1
-    cd "$(dirname "$(find . -type f -name "$FILENAME" | head -1)")"
 }
 
 #-------------------------------------------------------------

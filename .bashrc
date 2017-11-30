@@ -155,8 +155,6 @@ fi
 # Test user type:
 if [[ ${USER} == "root" ]]; then
     SU=${Red}           # User is root.
-elif [[ ${USER} != $(logname) ]]; then
-    SU=${BRed}          # User is not login user.
 else
     SU=${BCyan}         # User is normal (well ... most of us are).
 fi
@@ -259,4 +257,22 @@ function printfuncs {
     cat ~/.bash_kowalsky | grep -i 'function' | sort
 }
 
-. ~/.bash_kowalsky
+#-------------------------------------------------------------
+# Check for localized extensions.
+#-------------------------------------------------------------
+if [ -f ~/.bash_kowalsky ]; then
+    . ~/.bash_kowalsky
+fi
+
+if [ -f ~/.bash_igdev ]; then
+    . ~/.bash_igdev
+fi
+
+#-------------------------------------------------------------
+# Print funcs in the kowalsky bashrc file.
+#-------------------------------------------------------------
+if [ -f ~/.bash_kowalsky ]; then
+    function printfuncs { 
+	cat ~/.bash_kowalsky | grep -i 'function' | sort
+    }
+fi

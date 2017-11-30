@@ -37,14 +37,6 @@ alias slibs="/usr0/igdev/sw/working/jkowalsk/starsky/tools/populate.sh -j4 --bui
 #-------------------------------------------------------------
 export TERM="xterm-256color"
 
-#-------------------------------------------------------------
-# Add dev tools to path
-#-------------------------------------------------------------
-# path to qmake
-export PATH=/opt/Qt5.8.0/5.8/gcc_64/bin:$PATH
-
-
-
 #-------------------
 # Personal Aliases
 #-------------------

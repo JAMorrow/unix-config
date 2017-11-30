@@ -2,17 +2,6 @@
 ;;; Commentary:
 ;;; Code:
 
-;; Added by Package.el.  This must come before configurations of
-;; installed packages.  Don't delete this line.  If you don't want it,
-;; just comment it out by adding a semicolon to the start of the line.
-;; You may delete these explanatory comments.
-(package-initialize)
-
-;; Tell emacs where is your personal elisp lib dir
-(add-to-list 'load-path "~/.emacs.d/elpa/")
-(let ((default-directory "~/.emacs.d/elpa/"))
-  (normal-top-level-add-subdirs-to-load-path))
-
 ;; MELPA and Marmalade support
 (require 'package)
 (add-to-list 'package-archives
@@ -22,55 +11,25 @@
   ;; For important compatibility libraries like cl-lib
   (add-to-list 'package-archives '("gnu" . "http://elpa.gnu.org/packages/")))
 
+ 
+;;;
+;;; Make sure all needed packages are installed.
+;;;
 
-;; change all prompts to y or n
-(fset 'yes-or-no-p 'y-or-n-p)
-
-(custom-set-variables
- ;; custom-set-variables was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(ansi-color-faces-vector
-   [default bold shadow italic underline bold bold-italic bold])
- '(column-number-mode t)
- '(cursor-type (quote bar))
- '(desktop-restore-eager 5)
- '(desktop-save t)
- '(fringe-mode 10 nil (fringe))
- '(global-auto-revert-mode nil)
- '(global-reveal-mode t)
- '(inhibit-startup-screen t)
- '(linum-format "%3i")
- '(package-selected-packages
+(setq package-selected-packages
    (quote
-    (origami cheatsheet ample-theme moe-theme which-key visual-regexp-steroids dired-rainbow rainbow-delimiters powerline fish-mode cmake-mode smex nyan-mode nsis-mode multi-term magit-gitflow git-messenger)))
- '(vc-annotate-background nil)
- '(vc-annotate-very-old-color nil)
- '(when
-      (or
-       (not
-        (boundp
-         (quote ansi-term-color-vector)))
-       (not
-        (facep
-         (aref ansi-term-color-vector 0))))))
+    (clang-format column-marker company company-c-headers company-irony company-irony-c-headers flycheck flycheck-color-mode-line flycheck-rtags rtags cmake-ide origami visual-regexp-steroids dired-rainbow rainbow-delimiters powerline cmake-mode smex nyan-mode multi-term magit)))
 
-;;;
-;;; Make sure all neededd packages are installed.
-;;;
 (package-initialize)
 (unless package-archive-contents
   (package-refresh-contents))
 (package-install-selected-packages)
 
-
-
 ;;;
 ;;; THEME
 ;;;
-(load-theme 'ample-flat t t)
-(enable-theme 'ample-flat)
+;;(load-theme 'ample-flat t t)
+;;(enable-theme 'ample-flat)
 
 ;;;
 ;;; TERMINAL
@@ -87,20 +46,12 @@
 ;; Make sure we can send ESC to terminal while in Emacs
 (add-to-list 'term-bind-key-alist '("C-c C-e" . term-send-escape))
 
-;; Rainbow delimiters in most programming modes
-(require 'rainbow-delimiters)
-(add-hook 'prog-mode-hook #'rainbow-delimiters-mode)
-
 
 ;;;
 ;;; NAVIGATION
 ;;;
 
-;; Which-key -- help learn keybindings.
-(require 'which-key)
-(which-key-mode)
-
-;; Origami m ode keybindings
+;; Origami mode keybindings
 (global-set-key (kbd "C-c o") 'origami-open-node)
 (global-set-key (kbd "C-c c") 'origami-close-node)
 (global-set-key (kbd "C-c a") 'origami-close-all-nodes)
@@ -143,9 +94,6 @@
 ;; Git tools
 (require 'magit)
 (global-set-key (kbd "C-x g") 'magit-status)
-;; See what commit inspired the change
-(require 'git-messenger)
-(global-set-key (kbd "C-x v p") 'git-messenger:popup-message)
 
 ;;;
 ;;; PYTHON
@@ -166,6 +114,15 @@
 (if (fboundp 'scroll-bar-mode) (scroll-bar-mode -1))
 (if (fboundp 'tool-bar-mode) (tool-bar-mode -1))
 
+;; consistent prompts
+(fset 'yes-or-no-p 'y-or-n-p)
+
+;; I like column numbers
+(column-number-mode t)
+
+;; No Startup screen
+(setq inhibit-startup-screen t)
+
 ;; save backups in a backups directory instead of cluttering the working dir
 (setq backup-directory-alist '(("." . "~/.emacs.d/backup"))
   backup-by-copying t    ; Don't delink hardlinks
@@ -175,6 +132,7 @@
   kept-old-versions 5    ; and how many of the old
   )
 
+;; Always spaces
 (setq-default indent-tabs-mode nil)
 
 ;; turn off audible bell

@@ -35,11 +35,15 @@ fi
 #-------------------------------------------------------------
 # Add dev tools to path
 #-------------------------------------------------------------
-export PATH=$PATH:~/devtools/clion-2016.3.2/bin
+#export PATH=$PATH:~/devtools/clion-2016.3.2/bin
 
 #-------------------------------------------------------------
 # Some settings
 #-------------------------------------------------------------
+
+
+
+export CLICOLOR=1
 
 # Enable options:
 shopt -s cdspell
@@ -95,16 +99,12 @@ NC="\e[m"               # Color Reset
 
 ALERT=${BWhite}${On_Red} # Bold White on red background
 
-echo -e "${BCyan}This is BASH ${BRed}${BASH_VERSION%.*}${BCyan}\
-- DISPLAY on ${BRed}$DISPLAY${NC}\n"
+echo -e "This is BASH ${BASH_VERSION}.\nGodzilla is rampaging.\n"
 date
-if [ -x /usr/games/fortune ]; then
-    /usr/games/fortune -s     # Makes our day a bit more fun.... :-)
-fi
 
 function _exit()    # INITFUNC          # Function to run upon exit of shell.
 {
-    echo -e "${BRed}Exit, Stage Right!${NC}"
+    echo -e "Exit, Stage Right!"
 }
 trap _exit EXIT
 
@@ -159,75 +159,12 @@ else
     SU=${BCyan}         # User is normal (well ... most of us are).
 fi
 
-NCPU=$(grep -c 'processor' /proc/cpuinfo)    # Number of CPUs
-SLOAD=$(( 100*${NCPU} ))        # Small load
-MLOAD=$(( 200*${NCPU} ))        # Medium load
-XLOAD=$(( 400*${NCPU} ))        # Xlarge load
-
-# Returns system load as percentage, i.e., '40' rather than '0.40)'.
-function load() # INITFUNC
-{
-    local SYSLOAD=$(cut -d " " -f1 /proc/loadavg | tr -d '.')
-    # System load of the current host.
-    echo $((10#$SYSLOAD))       # Convert to decimal.
-}
-
-# Returns a color indicating system load.
-function load_color() # INITFUNC
-{
-    local SYSLOAD=$(load)
-    if [ ${SYSLOAD} -gt ${XLOAD} ]; then
-        echo -en ${ALERT}
-    elif [ ${SYSLOAD} -gt ${MLOAD} ]; then
-        echo -en ${Red}
-    elif [ ${SYSLOAD} -gt ${SLOAD} ]; then
-        echo -en ${BRed}
-    else
-        echo -en ${Green}
-    fi
-}
-
-# Returns a color according to free disk space in $PWD.
-function disk_color() # INITFUNC
-{
-    if [ ! -w "${PWD}" ] ; then
-        echo -en ${Red}
-        # No 'write' privilege in the current directory.
-    elif [ -s "${PWD}" ] ; then
-        local used=$(command df -P "$PWD" |
-                   awk 'END {print $5} {sub(/%/,"")}')
-        if [ ${used} -gt 95 ]; then
-            echo -en ${ALERT}           # Disk almost full (>95%).
-        elif [ ${used} -gt 90 ]; then
-            echo -en ${BRed}            # Free disk space almost gone.
-        else
-            echo -en ${Green}           # Free disk space is ok.
-        fi
-    else
-        echo -en ${Cyan}
-        # Current directory is size '0' (like /proc, /sys etc).
-    fi
-}
-
-# Returns a color according to running/suspended jobs.
-function job_color()  # INITFUNC
-{
-    if [ $(jobs -s | wc -l) -gt "0" ]; then
-        echo -en ${BRed}
-    elif [ $(jobs -r | wc -l) -gt "0" ] ; then
-        echo -en ${BCyan}
-    fi
-}
-
 # Adds some text in the terminal frame (if applicable).
 
 # Now we construct the prompt.
 PROMPT_COMMAND="history -a"
 case ${TERM} in
   *term | rxvt | linux)
-        PS1="\[\$(load_color)\][\A\[${NC}\] "
-        # Time of day (with load info):
-        PS1="\[\$(load_color)\][\A\[${NC}\] "
         # User@Host (with connection type info):
         PS1=${PS1}"\[${SU}\]\u\[${NC}\]@\[${CNX}\]\h\[${NC}\] "
         # PWD (with 'disk space' info):
@@ -262,10 +199,6 @@ function printfuncs {
 #-------------------------------------------------------------
 if [ -f ~/.bash_kowalsky ]; then
     . ~/.bash_kowalsky
-fi
-
-if [ -f ~/.bash_igdev ]; then
-    . ~/.bash_igdev
 fi
 
 #-------------------------------------------------------------

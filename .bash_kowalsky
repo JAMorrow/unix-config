@@ -3,13 +3,10 @@
 #============================================================
 #
 # Personal Configurations for BASH
-# Author: Jennifer Kowalsky
+# Author: Jennifer Morrow
 # Credit: Mostly to the internet.
 #
 #============================================================
-
-alias bigscreen="xrandr --output Virtual1 --mode 1920x1200"
-alias littlescreen="xrandr --output Virtual1 --mode 640x480"
 
 #-------------------------------------------------------------
 # Add Emacs 256 color suport.
@@ -20,7 +17,6 @@ export TERM="xterm-256color"
 # Personal Aliases
 #-------------------
 
-alias alpine='alpine -passfile ~/.pine-passfile'
 alias rm='rm -i'
 alias cp='cp -i'
 alias mv='mv -i'

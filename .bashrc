@@ -1,7 +1,7 @@
 # =============================================================== #
 #
 # PERSONAL $HOME/.bashrc FILE for bash-3.0 (or later)
-# By Jennifer Kowalsky [Jennifer.Kowalsky@Fluke.com]
+# By Jennifer Morrow
 #
 #  Mostly copied from here:
 #  http://www.tldp.org/LDP/abs/html/sample-bashrc.html
@@ -186,26 +186,18 @@ export HISTTIMEFORMAT="$(echo -e ${BCyan})[%d/%m %H:%M:%S]$(echo -e ${NC}) "
 export HISTCONTROL=ignoredups
 export HOSTFILE=$HOME/.hosts    # Put a list of remote hosts in ~/.hosts
 
-
-#-------------------------------------------------------------
-# Print funcs in the kowalsky bashrc file.
-#-------------------------------------------------------------
-function printfuncs { 
-    cat ~/.bash_kowalsky | grep -i 'function' | sort
-}
-
 #-------------------------------------------------------------
 # Check for localized extensions.
 #-------------------------------------------------------------
-if [ -f ~/.bash_kowalsky ]; then
-    . ~/.bash_kowalsky
+if [ -f ~/.bash_morrow ]; then
+    . ~/.bash_morrow
 fi
 
 #-------------------------------------------------------------
 # Print funcs in the kowalsky bashrc file.
 #-------------------------------------------------------------
-if [ -f ~/.bash_kowalsky ]; then
+if [ -f ~/.bash_morrow ]; then
     function printfuncs { 
-	cat ~/.bash_kowalsky | grep -i 'function' | sort
+	cat ~/.bash_morrow | grep -i 'function' | sort
     }
 fi
